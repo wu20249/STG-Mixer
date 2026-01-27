@@ -42,11 +42,7 @@ def get_callbacks(args):
     early_stop = EarlyStopping(
         monitor=monitor,
         min_delta=1e-3,  # 0.001
-<<<<<<< HEAD
-        patience=70,  # 20~50
-=======
-        patience=50,  # 20~50
->>>>>>> 144ebf881d249e71091c0800fe43b8f650aa933a
+        patience=70,  # 50~70
         mode="max",
         verbose=True,
         check_finite=True
