@@ -458,7 +458,6 @@ class Encoder(nn.Module):
         self.node_proj = nn.Linear(self._hidden_dim, 1, bias=False)
         self.linear = nn.Linear(1, 1)
         self.weighted_sum = WeightedSum()
-<<<<<<< HEAD
         self.embedding = Embedding(self.linear, self.in_norm)
         self.dual_tgcn_agg = Dual_layer_T_GCN_Aggregation_block(
             tgcn_cell1=self.tgcn_cell1,
