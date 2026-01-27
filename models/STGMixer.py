@@ -156,6 +156,7 @@ class BasicConv(nn.Module):
             x = self.dropout(x)
         return x
 
+<<<<<<< HEAD
 class Embedding(nn.Module):
     def __init__(self, linear: nn.Module, in_norm: nn.Module):
         super().__init__()
@@ -207,6 +208,8 @@ class Dual_layer_T_GCN_Aggregation_block(nn.Module):
         spatial_last = spatial_feats[:, -1]  # [B, N, D]
         return spatial_last
 
+=======
+>>>>>>> 144ebf881d249e71091c0800fe43b8f650aa933a
 class TimeKANblock(nn.Module):
     def __init__(self,d_model,seq_len,order):
         super().__init__()
@@ -458,6 +461,7 @@ class Encoder(nn.Module):
         self.node_proj = nn.Linear(self._hidden_dim, 1, bias=False)
         self.linear = nn.Linear(1, 1)
         self.weighted_sum = WeightedSum()
+<<<<<<< HEAD
         self.embedding = Embedding(self.linear, self.in_norm)
         self.dual_tgcn_agg = Dual_layer_T_GCN_Aggregation_block(
             tgcn_cell1=self.tgcn_cell1,
@@ -469,14 +473,49 @@ class Encoder(nn.Module):
     def forward(self, case, combine):
 
         B, T, N = case.shape
+=======
+
+    def forward(self, case, combine):
+
+>>>>>>> 144ebf881d249e71091c0800fe43b8f650aa933a
         # ============================================================
         # AF-SB (Spatial branch)
         # ============================================================
         # Embedding
+<<<<<<< HEAD
         inputs = self.embedding(case)  # [B*T, N]
 
         # Dual-layer_T-GCN_Aggregation_block
         spatial_last = self.dual_tgcn_agg(inputs, B=B, T=T, N=N)  # [B, N, D]
+=======
+        B, T, N = case.shape
+        case_all = case.view(B * T, N, 1)
+        x2 = self.linear(case_all).squeeze(-1)
+        x2n = self.in_norm(x2)  # [B*T, N]
+        inputs = x2n
+
+        # Dual-layer_T-GCN_Aggregation_block
+        D = self._hidden_dim
+        h0 = torch.zeros(B*T, N * D, device=inputs.device)
+        layer_embeds = []
+        # TGCN
+        out1, h1 = self.tgcn_cell1(inputs, h0)
+        z1 = out1.view(B, T, N, D)
+        layer_embeds.append(z1)
+        x2nn = self.node_proj(
+            z1.view(B * T, N, D)
+        ).squeeze(-1)
+        # TGCN
+        out2, h2 = self.tgcn_cell2(x2nn, h1)
+        out2 = out2.view(B, T, N, D)
+        layer_embeds.append(out2)
+        # AGG
+        spatial_feats = torch.max(
+            torch.stack(layer_embeds, dim=0),
+            dim=0
+        ).values
+        spatial_last = spatial_feats[:, -1]            # [B, N, D]
+>>>>>>> 144ebf881d249e71091c0800fe43b8f650aa933a
 
         # TimeKAN block
         temporal_last = self.TimeKANblock(spatial_last)  # [B, N, D]
