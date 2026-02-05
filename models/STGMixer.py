@@ -189,10 +189,8 @@ class Dual_layer_T_GCN_Aggregation_block(nn.Module):
         z1 = out1.view(B, T, N, D)
         layer_embeds.append(z1)
 
-        x2nn = self.node_proj(
-            z1.view(B * T, N, D)
-        ).squeeze(-1)
-
+        x2nn = z1[..., 0].contiguous().view(B * T, N)  # [B*T, N]
+        
         # TGCN 2
         out2, h2 = self.tgcn_cell2(x2nn, h1)
         out2 = out2.view(B, T, N, D)
