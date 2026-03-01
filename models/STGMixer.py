@@ -269,7 +269,7 @@ class ORGF(nn.Module):
     def _proj(self, u, v):
         # project v onto u: (v·u)/(u·u+eps) * u
         coef = (v * u).sum(dim=-1, keepdim=True) / ((u * u).sum(dim=-1, keepdim=True) + self.eps)
-        coef = coef.clamp(-10.0, 10.0)  # 防极端梯度
+        coef = coef.clamp(-10.0, 10.0)  
         return coef * u
 
     def _gamma(self, ref_tensor: torch.Tensor):
